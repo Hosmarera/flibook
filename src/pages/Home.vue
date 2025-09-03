@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-black min-h-screen p-3 sm:p-4 space-y-6 max-w-screen-sm mx-auto">
+  <!-- app-shell uses CSS variables from App.vue to support light/dark -->
+  <div class="app-shell min-h-screen p-3 sm:p-4 space-y-6 max-w-screen-sm mx-auto">
     <BannerSlider :banners="banners" @ads-click="handleAdsClick" />
 
     <template v-if="geolocationAllowed">
@@ -7,17 +8,16 @@
         <!-- Native Ads di tengah -->
         <NativeAd v-if="index === middleIndex" :ads="nativeAds" @ads-click="handleAdsClick" />
 
-        <h5 class="text-white font-bold mb-2">{{ books[0].category_name }}</h5>
         <BookCarousel
           :books="books"
-          :category="category"
+          :title="books?.[0]?.category_name || category"
           @book-click="handleBookClick"
-          @view-all="handleViewAll(category)"
+          @view-all="() => handleViewAll(category)"
         />
       </section>
     </template>
 
-    <div v-else class="text-center text-gray-400 py-6">
+    <div v-else class="text-center text-muted py-6">
       <h3>Akses Ditolak!</h3>
     </div>
 
@@ -68,8 +68,11 @@ function handleAdsClick(ad) {
   window.open(ad.url_redirect, '_blank')
 }
 
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
 function handleViewAll(category) {
-  console.log('View all for', category)
+  router.push({ name: 'category', params: { id: category } })
 }
 
 function skipInterstitial() {

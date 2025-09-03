@@ -58,32 +58,81 @@ defineExpose({ shellRef });
   inset: 0;
   display: flex;
   flex-direction: column;
-  background: #e8e8e8;
+  background: var(--surface);
+  color: var(--text);
   overflow: hidden;
 }
+
+/* topbar that matches the screenshot: dark strip with subtle blur */
 .topbar {
-  height: 42px;
-  background: #2b2b2b;
-  color: #fff;
+  height: 56px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.25), transparent);
+  color: var(--text);
   display: flex;
   align-items: center;
-  padding: 0 12px;
+  padding: 0 16px;
+  gap: 12px;
+  backdrop-filter: blur(6px);
   transition: opacity 200ms ease, transform 200ms ease;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
 }
+
+/* title and controls */
 .title {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
 }
 .close-btn {
   margin-left: auto;
   background: transparent;
-  color: #cfcfcf;
+  color: var(--muted);
   border: none;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 20px;
+  padding: 6px;
+  border-radius: 8px;
 }
+.close-btn:hover {
+  background: rgba(0,0,0,0.06);
+  color: var(--accent);
+}
+
 .hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+/* loading overlay card centered */
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--pdf-overlay);
+  z-index: 30;
+}
+.loading-card {
+  background: var(--card);
+  color: var(--text);
+  padding: 18px 22px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.loading-card .spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 4px solid rgba(0,0,0,0.08);
+  border-top-color: var(--accent);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 </style>

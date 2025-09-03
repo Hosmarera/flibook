@@ -16,6 +16,7 @@
     "rematrix": "^0.7.2",
     "tailwindcss": "^4.1.12",
     "vue": "^3.5.18",
+    "vue-lazyload": "^3.0.0",
     "vue-router": "4"
   },
   "devDependencies": {

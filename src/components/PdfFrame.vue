@@ -43,34 +43,44 @@ const emit = defineEmits(['loaded']);
   align-items: center;
   justify-content: center;
 }
+
+/* Watermark placed once on top-right; subtle in both themes */
 .wm-once {
   position: absolute;
   top: 12px;
   right: 12px;
-  opacity: 0.4;
+  opacity: 0.35;
   pointer-events: none;
+  filter: grayscale(10%) contrast(0.9);
 }
+
+/* PDF loading card uses theme variables for light/dark consistency */
 .pdf-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #444;
+  color: var(--text);
   font-size: 15px;
-  background: rgba(255,255,255,0.85);
+  background: var(--pdf-overlay);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  min-width: 220px;
 }
+
+/* spinner follows accent color from theme */
 .pdf-loading .spinner {
   width: 32px;
   height: 32px;
-  border: 4px solid #e0e0e0;
-  border-top: 4px solid #1976d2;
+  border: 4px solid rgba(0,0,0,0.06);
+  border-top: 4px solid var(--accent);
   border-radius: 50%;
   animation: pdf-spin 1s linear infinite;
   margin-bottom: 12px;
 }
+
 @keyframes pdf-spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
