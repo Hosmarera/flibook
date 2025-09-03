@@ -31,8 +31,8 @@ defineExpose({ shellRef });
   <div ref="shellRef" class="viewer-shell">
     <div class="topbar" :class="{ hidden: !showUI }">
       <div class="title">{{ title }}</div>
-      <button class="close-btn" aria-label="Toggle Fullscreen" @click="$emit('toggleFullscreen')">
-        {{ isFullscreen ? '⤢' : '⤢' }}
+      <button class="close-btn" aria-label="Toggle Fullscreen" @click="$emit('exitBook')">
+        &#10005;
       </button>
     </div>
 

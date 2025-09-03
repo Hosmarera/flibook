@@ -1,0 +1,127 @@
+<script setup>
+import { ref, onMounted, computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import ViewerShell from '../components/ViewerShell.vue';
+import Stage from '../components/Stage.vue';
+import ControlsBar from '../components/ControlsBar.vue';
+import { useViewerState } from '../composables/useViewerState';
+import { usePointerPan } from '../composables/usePointerPan';
+import { books } from '../data/books';
+
+// route + selected book
+const route = useRoute();
+const routeId = computed(() => String(route.params.id || '1'));
+const selectedBook = computed(() => books[routeId.value] || null);
+
+if (!selectedBook.value) {
+  // If there's no book mapping, we still create a viewer with a default PDF
+}
+
+// create viewer state using the selected book's PDF (pass a string here)
+const pdfUrl = selectedBook.value ? selectedBook.value.pdf : '/sample 1.pdf';
+const state = useViewerState(pdfUrl);
+
+// Pointer / pan handlers (returns functions to bind to DOM events)
+const { onPointerDown, onPointerMove, onPointerUp, handleZoomWheel } = usePointerPan({
+  stageRef: state.stageRef,
+  zoomScale: state.zoomScale,
+  panX: state.panX,
+  panY: state.panY,
+  isPanning: state.isPanning,
+  canPan: state.canPan,
+  showUI: state.showUI,
+  scheduleHideUI: state.scheduleHideUI,
+  prevPage: state.prevPage,
+  nextPage: state.nextPage,
+});
+
+const viewerShellRef = ref(null);
+
+onMounted(() => {
+  // wire shellRef from ViewerShell (ViewerShell exposes its internal shellRef)
+  if (viewerShellRef.value && viewerShellRef.value.shellRef) {
+    state.shellRef.value = viewerShellRef.value.shellRef.value;
+  }
+});
+
+const router = useRouter()
+</script>
+
+<template>
+  <div>
+    <ViewerShell
+      v-if="selectedBook"
+      ref="viewerShellRef"
+      :isFullscreen="state.isFullscreen"
+      :showUI="state.showUI"
+      @toggleFullscreen="state.toggleFullscreen"
+      @exitBook="()=> router.push('/')"
+      :pdfLoading="false"
+    >
+      <template #stage>
+        <Stage v-if="state.pdf.value"
+          :pdf="state.pdf.value"
+          :buffer-pages="state.bufferPages.value"
+          :displayed-pages="state.displayedPages.value"
+          :scaled-width="state.scaledWidth.value"
+          :scaled-height="state.scaledHeight.value"
+          :frame-transform="state.frameTransform.value"
+          :flip-origin="state.flipOrigin.value"
+          :rotation-style="state.rotationStyle.value"
+          :stage-classes="state.stageClasses.value"
+          :stage-ref="state.stageRef"
+          :showUI="state.showUI.value"
+          @pointerdown="onPointerDown"
+          @pointermove="onPointerMove"
+          @pointerup="onPointerUp"
+          @wheel="handleZoomWheel"
+          @stageClick="state.handleStageClick"
+          @pageLoaded="state.pdfLoaded"
+        />
+
+        <div class="pdf-loading" v-else>
+          <span class="spinner"></span>
+          <span>Memuat dokumen...</span>
+        </div>
+      </template>
+
+      <template #controls>
+        <ControlsBar
+          :page="state.page.value"
+          :pages-count="state.pages.value"
+          :is-first-page="state.page.value === 1"
+          :is-last-page="state.page.value === state.pages.value"
+          :zoom-scale="state.zoomScale.value"
+          :showUI="state.showUI"
+          @prev="state.prevPage"
+          @next="state.nextPage"
+          @zoomIn="state.zoomIn"
+          @zoomOut="state.zoomOut"
+          @fit="state.fitToScreen"
+          @toggleFullscreen="state.toggleFullscreen"
+        />
+      </template>
+    </ViewerShell>
+
+    <div v-else class="not-found">
+      <p>Book not found</p>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.pdf-loading {
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:center;
+  height:100%;
+  color:#333;
+}
+.not-found {
+  padding: 24px;
+  color: #fff;
+  background: #111;
+  min-height: 100vh;
+}
+</style>

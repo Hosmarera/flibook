@@ -31,12 +31,12 @@ const emit = defineEmits(['loaded']);
     </template>
 
     <div class="wm-once">
-      <img class="w-16" :src="watermarkSrc" alt="watermark" />
+      <img class="w-12 sm:w-16" :src="watermarkSrc" alt="watermark" />
     </div>
   </div>
 </template>
 
-<style scoped>
+<style>
 .pdf-frame-inner {
   position: relative;
   display: flex;
